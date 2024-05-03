@@ -9,11 +9,16 @@ import { Label } from "@radix-ui/react-label";
 // import "react-responsive-carousel/lib/styles/carousel.min.css";
 // import { Carousel } from 'react-responsive-carousel';
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 export default function Login() {
   const { register, handleSubmit, formState: { errors } } = useForm();
   const navigate=useNavigate();
+  const {user,setUser}=useAuth();
   const onSubmit = (data) => {
     console.log(data);
+    setUser(data)
+    console.log(user);
+   
     // You can perform form submission logic here
   };
   return (
@@ -86,7 +91,7 @@ export default function Login() {
         icon={faEnvelope}
       />
       <Input
-        {...register("emailOrPhone", {
+        {...register("email", {
           required: "Email or Phone Number is required",
           pattern: {
             value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
