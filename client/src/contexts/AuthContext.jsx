@@ -1,11 +1,12 @@
-import { createContext, useContext,useState } from "react";
+import { createContext, useContext,useEffect,useState } from "react";
 
 export const AuthContext=createContext(null);
 
 export const CounterProvider=(props)=>{
-    const [user,setUser]=useState({});
+    const [UserData,setUserData]=useState([]);
+    
     return(
-        <AuthContext.Provider value={{user,setUser}} >
+        <AuthContext.Provider value={{UserData,setUserData}} >
             {props.children}
         </AuthContext.Provider>
     )

@@ -6,20 +6,34 @@ import { LampDemo } from "../components/ui/LoginImage";
 import { useForm } from "react-hook-form";
 import { PasswordInput } from "../components/ui/PasswordInput";
 import { Label } from "@radix-ui/react-label";
-// import "react-responsive-carousel/lib/styles/carousel.min.css";
-// import { Carousel } from 'react-responsive-carousel';
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useEffect } from "react";
 export default function Login() {
   const { register, handleSubmit, formState: { errors } } = useForm();
   const navigate=useNavigate();
-  const {user,setUser}=useAuth();
-  const onSubmit = (data) => {
-    console.log(data);
-    setUser(data)
-    console.log(user);
+  const {UserData,setUserData}=useAuth();
+  const onSubmit = async(data) => {
+    
+    try {
+      // login API call
+      const response = await axios.post('http://localhost:8000/api/v1/users/login', data);
+      // console.log('Login successful!', response.data);
+      // Redirect to dashboard after successful login
+      
+      setUserData([response.data]);
+      localStorage.setItem('isUserAuthenticated', true);
+      // localStorage.setItem('user', UserData);
+      
+      navigate("/dashboard")
+    } catch (error) {
+      toast.error('Wrong Email or Password! Please try again.');
+    }
    
-    // You can perform form submission logic here
+  
   };
   return (
     <div className="w-screen flex font-sans">
@@ -123,6 +137,7 @@ export default function Login() {
     >
       Continue
     </Button>
+    <ToastContainer />
   </div>
 </form>
 
