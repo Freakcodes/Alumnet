@@ -5,13 +5,13 @@ import { faEnvelope } from "@fortawesome/free-regular-svg-icons";
 import { LampDemo } from "../components/ui/LoginImage";
 import { useForm } from "react-hook-form";
 import { PasswordInput } from "../components/ui/PasswordInput";
-import { Label } from "@radix-ui/react-label";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useEffect } from "react";
+import Cookies from "js-cookie";
+import { User } from "lucide-react";
 export default function Login() {
   const { register, handleSubmit, formState: { errors } } = useForm();
   const navigate=useNavigate();
@@ -23,11 +23,16 @@ export default function Login() {
       const response = await axios.post('http://localhost:8000/api/v1/users/login', data);
       // console.log('Login successful!', response.data);
       // Redirect to dashboard after successful login
+      const accessToken=response.data.data.accessToken;
+      
+      //store the token in cookies
+      Cookies.set('accessToken', accessToken);
       
       setUserData([response.data]);
+      console.log(UserData);
       localStorage.setItem('isUserAuthenticated', true);
-      // localStorage.setItem('user', UserData);
-      
+      localStorage.setItem('username',response.data.data.user.name);
+      // console.log(localStorage.getItem('data'));
       navigate("/dashboard")
     } catch (error) {
       toast.error('Wrong Email or Password! Please try again.');
