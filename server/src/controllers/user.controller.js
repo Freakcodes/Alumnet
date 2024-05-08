@@ -367,6 +367,23 @@ const searchAndDiscover = asyncHandler(async (req, res) => {
   }
 });
 
+const dashboardData = asyncHandler(async (req, res) => {
+  const alumniData = await User.find({
+    userType: "alumni",
+  }).select("avatar username name companyName")
+  // .select("-password -createdAt -updatedAt -refreshToken  -__v -userType");
+
+  if (!alumniData) {
+    throw new ApiError(500, "Unable to find alumni information");
+  }
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(200, alumniData, "Dashboard data fetched successfully")
+    );
+});
+
 export {
   registerUser,
   loginUser,
@@ -376,4 +393,5 @@ export {
   searchAndDiscover,
   getCurrentUser,
   changeCurrentPassword,
+  dashboardData,
 };

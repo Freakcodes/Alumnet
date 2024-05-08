@@ -8,6 +8,7 @@ import {
   searchAndDiscover,
   getCurrentUser,
   changeCurrentPassword,
+  dashboardData,
 } from "../controllers/user.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
@@ -26,5 +27,6 @@ router
 router.route("/change-password").post(verifyJWT, changeCurrentPassword);
 router.route("/my-profile").get(verifyJWT, getCurrentUser);
 router.route("/search-and-discover").get(verifyJWT, searchAndDiscover);
+router.route("/home").get(dashboardData);
 
 export default router;
