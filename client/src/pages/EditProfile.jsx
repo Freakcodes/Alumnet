@@ -60,7 +60,7 @@ const EditProfile = () => {
                   ["image/jpeg", "image/png"].includes(value[0].type),
               },
             })}
-            // accept=".jpg, .jpeg, .png"
+            accept=".jpg, .jpeg, .png"
             className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-blue-500"
           />
           {errors.profilePicture && (
