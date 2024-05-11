@@ -51,6 +51,9 @@ const registerUser = asyncHandler(async (req, res) => {
     password,
   });
   // console.log(user);
+  const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
+    user._id
+  );
 
   const createdUser = await User.findById(user._id).select(
     "-password -refreshToken"
@@ -60,8 +63,15 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new ApiError(500, "Something went wrong while registering the user");
   }
 
+  const options = {
+    httpOnly: true,
+    secure: true,
+  };
+
   return res
     .status(201)
+    .cookie("accessToken", accessToken, options)
+    .cookie("refreshToken", refreshToken, options)
     .json(
       new ApiResponse(200, createdUser, "User has been registered successfully")
     );
@@ -370,7 +380,7 @@ const searchAndDiscover = asyncHandler(async (req, res) => {
 const dashboardData = asyncHandler(async (req, res) => {
   const alumniData = await User.find({
     userType: "alumni",
-  }).select("avatar username name companyName")
+  }).select("avatar username name companyName");
   // .select("-password -createdAt -updatedAt -refreshToken  -__v -userType");
 
   if (!alumniData) {
