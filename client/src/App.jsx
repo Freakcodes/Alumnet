@@ -13,6 +13,8 @@ import Dashboard from "./pages/Dashboard";
 import Feed from "./pages/Feed";
 import EditProfile from "./pages/EditProfile";
 import Profile from "./pages/Profile";
+import EditProfileAlumni from "./pages/EditProfileAlumni";
+import Ask from "./pages/Ask";
 function App() {
   const {user}=useAuth();
     const router = createBrowserRouter(
@@ -20,10 +22,14 @@ function App() {
       <Route>
         <Route path="" element={<Home/>} />
         <Route element={<PrivateRoutes/>} >
-         <Route path='/dashboard' element={<Dashboard/>} />
          <Route path='/feed' element={<Feed/>} />
          <Route path='/profile' element={<Profile/>}/>
-          <Route path='/profile/edit' element={<EditProfile/>}/>
+         <Route path='/ask' element={<Ask/>}/>
+        <Route path='/profile/student' element={<EditProfile/>}/>
+        <Route path='/profile/alumni' element={<EditProfileAlumni/>}/>
+         
+         
+       
         
         </Route>
         <Route path="/login" element={<Login/>} />

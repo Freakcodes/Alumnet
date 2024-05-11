@@ -4,55 +4,55 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
 
-
-const EditProfile = () => {
+const EditProfileAlumni = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
-  const navigate=useNavigate();
+  const navigate = useNavigate();
+
   const onSubmit = async (data) => {
-    
-    const avatar=data.avatar[0];
-    data.avatar=avatar;
     const token = Cookies.get('accessToken');
     
     if (token) {
       try {
-        // Update student API call
-        const response = await axios.post('http://localhost:8000/api/v1/users/update-student', data, {
+        const formData = new FormData();
+        formData.append('avatar', data.avatar[0]);
+        formData.append('userType', data.userType);
+        formData.append('phoneNo', data.phoneNo);
+        formData.append('linkedInUrl', data.linkedInUrl);
+        formData.append('collegeName', data.collegeName);
+        formData.append('courseName', data.courseName);
+        formData.append('companyName', data.companyName);
+        formData.append('location', data.location);
+        formData.append('areaOfExpertise', data.areaOfExpertise);
+        
+        const response = await axios.post('http://localhost:8000/api/v1/users/update-alumni', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
             Authorization: `Bearer ${token}`,
           },
         });
         
-        // Check if the response indicates successful update
         if (response.status === 200 && response.data.success) {
-          // Update successful, redirect to dashboard
           navigate("/dashboard");
         } else {
-          // Handle update failure or unauthorized request
-          console.error('Update failed or unauthorized request:', response.data.message);
-          // Optionally, you can handle different types of errors here
+          console.error('Profile creation failed:', response.data.message);
         }
       } catch (error) {
-        // Handle network errors or unexpected errors
         console.error('Error:', error);
       }
     } else {
-      // Handle missing token
       console.error('Token not found in localStorage');
-      // Optionally, you can redirect the user to the login page or display an error message
     }
   };
 
   return (
-    <div className="mx-auto max-w-md p-6  rounded-md shadow-md">
-      <h2 className="text-lg font-semibold mb-4">Edit Profile</h2>
+    <div className="mx-auto max-w-md p-6 rounded-md shadow-md">
+      <h2 className="text-lg font-semibold mb-4">Add Profile</h2>
       <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="mb-4">
-          <label htmlFor="profilePicture" className="block mb-1">Avatar (jpg/png)</label>
+        <div className="mb-4">
+          <label htmlFor="avatar" className="block mb-1">Avatar (jpg/png)</label>
           <input
             type="file"
-            id="profilePicture"
+            id="avatar"
             {...register("avatar", {
               required: true,
               validate: {
@@ -63,13 +63,11 @@ const EditProfile = () => {
             accept=".jpg, .jpeg, .png"
             className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-blue-500"
           />
-          {errors.profilePicture && (
-            <span className="text-red-500">
-              Please upload a valid JPG or PNG file
-            </span>
+          {errors.avatar && (
+            <span className="text-red-500">Please upload a valid JPG or PNG file</span>
           )}
         </div>
-      <div className="mb-4">
+        <div className="mb-4">
           <label className="block mb-1">User Type</label>
           <div className="flex">
             <div className="mr-4">
@@ -80,7 +78,7 @@ const EditProfile = () => {
                 {...register("userType", { required: true })}
                 defaultChecked
               />
-              <label htmlFor="male" className="ml-1">Alumni</label>
+              <label htmlFor="Alumni" className="ml-1">Alumni</label>
             </div>
             <div>
               <input
@@ -89,7 +87,7 @@ const EditProfile = () => {
                 value="Student"
                 {...register("userType", { required: true })}
               />
-              <label htmlFor="female" className="ml-1"  >Student</label>
+              <label htmlFor="Student" className="ml-1">Student</label>
             </div>
           </div>
           {errors.userType && <span className="text-red-500">Please select user type</span>}
@@ -134,6 +132,36 @@ const EditProfile = () => {
           />
           {errors.courseName && <span className="text-red-500">Course name is required</span>}
         </div>
+        <div className="mb-4">
+          <label htmlFor="companyName" className="block mb-1">Company Name</label>
+          <input
+            type="text"
+            id="companyName"
+            {...register("companyName", { required: true })}
+            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-blue-500"
+          />
+          {errors.companyName && <span className="text-red-500">Company name is required</span>}
+        </div>
+        <div className="mb-4">
+          <label htmlFor="location" className="block mb-1">Location</label>
+          <input
+            type="text"
+            id="location"
+            {...register("location", { required: true })}
+            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-blue-500"
+          />
+          {errors.location && <span className="text-red-500">Location is required</span>}
+        </div>
+        <div className="mb-4">
+          <label htmlFor="areaOfExpertise" className="block mb-1">Area of Expertise</label>
+          <input
+            type="text"
+            id="areaOfExpertise"
+            {...register("areaOfExpertise", { required: true })}
+            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-blue-500"
+          />
+          {errors.areaOfExpertise && <span className="text-red-500">Area of expertise is required</span>}
+        </div>
         <button
           type="submit"
           className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
@@ -145,4 +173,4 @@ const EditProfile = () => {
   );
 };
 
-export default EditProfile;
+export default EditProfileAlumni;
