@@ -7,7 +7,7 @@ import {
   deleteFromCloudinary,
 } from "../utils/cloudinary.js";
 import jwt from "jsonwebtoken";
-import mongoose from "mongoose";
+import mongoose, { isValidObjectId } from "mongoose";
 
 const generateAccessAndRefreshToken = async (userId) => {
   try {
@@ -153,13 +153,14 @@ const logoutUser = asyncHandler(async (req, res) => {
 });
 
 const updateStudent = asyncHandler(async (req, res) => {
-  const { userType, phoneNo, linkedInUrl, collegeName, courseName } =
+  const { userType, name, phoneNo, linkedInUrl, collegeName, courseName } =
     req.body;
 
-  console.log(userType,phoneNo, linkedInUrl, collegeName, courseName);
+  console.log(userType, name, phoneNo, linkedInUrl, collegeName, courseName);
 
   if (
     !userType ||
+    !name ||
     !phoneNo ||
     !linkedInUrl ||
     !collegeName ||
@@ -187,7 +188,7 @@ const updateStudent = asyncHandler(async (req, res) => {
           url: avatarFile.url,
           public_id: avatarFile.public_id,
         },
-        
+        name,
         phoneNo,
         linkedInUrl,
         collegeName,
@@ -203,6 +204,7 @@ const updateStudent = asyncHandler(async (req, res) => {
 const updateAlumni = asyncHandler(async (req, res) => {
   const {
     userType,
+    name,
     phoneNo,
     linkedInUrl,
     collegeName,
@@ -214,6 +216,7 @@ const updateAlumni = asyncHandler(async (req, res) => {
 
   if (
     !userType ||
+    !name ||
     !phoneNo ||
     !linkedInUrl ||
     !collegeName ||
@@ -244,6 +247,7 @@ const updateAlumni = asyncHandler(async (req, res) => {
           url: avatarFile.url,
           public_id: avatarFile.public_id,
         },
+        name,
         phoneNo,
         linkedInUrl,
         collegeName,
@@ -394,6 +398,25 @@ const dashboardData = asyncHandler(async (req, res) => {
     );
 });
 
+const userProfile = asyncHandler(async (req, res) => {
+  const { userId } = req.params;
+  if (!isValidObjectId(userId)) {
+    throw new ApiError(400, "Invalid userId");
+  }
+
+  const profile = await User.findById(userId).select(
+    "-password -createdAt -updatedAt -refreshToken  -__v -userType"
+  );
+
+  if (!profile) {
+    throw new ApiError(400, "User not found");
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, profile, "User profile fetched successfully"));
+});
+
 export {
   registerUser,
   loginUser,
@@ -404,4 +427,5 @@ export {
   getCurrentUser,
   changeCurrentPassword,
   dashboardData,
+  userProfile,
 };
