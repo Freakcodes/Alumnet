@@ -32,7 +32,7 @@ const EditProfileAlumni = () => {
         });
         
         if (response.status === 200 && response.data.success) {
-          navigate("/dashboard");
+          navigate("/feed");
         } else {
           console.error('Profile creation failed:', response.data.message);
         }

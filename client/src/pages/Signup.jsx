@@ -7,6 +7,8 @@ import { useForm } from "react-hook-form";
 import { PasswordInput } from "../components/ui/PasswordInput";
 import { Label } from "@radix-ui/react-label";
 import { useNavigate } from "react-router-dom";
+// import { Toast } from "react-toastify/dist/components";
+import { ToastContainer, toast } from 'react-toastify';
 import axios from "axios";
 // import "react-responsive-carousel/lib/styles/carousel.min.css";
 // import { Carousel } from 'react-responsive-carousel';
@@ -27,11 +29,11 @@ export default function Signup() {
         "http://localhost:8000/api/v1/users/register",
         data
       );
-      console.log("Login successful!", response.data);
+      toast.error("Login Successfull!!")
       // Redirect to dashboard after successful login
       navigate("/dashboard");
     } catch (error) {
-      console.error("Login failed!", error);
+      toast.error("Login failed!");
       // Handle error (e.g., show error message)
     }
 
@@ -159,6 +161,7 @@ export default function Signup() {
             </div>
           </div>
         </div>
+        <ToastContainer />
       </div>
     </div>
   );
