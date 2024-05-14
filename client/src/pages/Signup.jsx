@@ -29,23 +29,26 @@ export default function Signup() {
         "http://localhost:8000/api/v1/users/register",
         data
       );
+      console.log(response.data.data);
+      // const accessToken=response.data.data.accessToken;
+      
+      //store the token in cookies
+      // Cookies.set('accessToken', accessToken);
       toast.error("Login Successfull!!")
       // Redirect to dashboard after successful login
-      navigate("/dashboard");
+      navigate("/ask");
     } catch (error) {
-      toast.error("Login failed!");
+      toast.error("Signup failed!");
       // Handle error (e.g., show error message)
     }
 
     // You can perform form submission logic here
   };
   return (
-    <div className="w-screen flex font-sans">
-      <div className="w-[50%] lg:block hidden h-screen">
-        <LampDemo />
-      </div>
+    
+      
 
-      <div className=" lg:w-[50%] w-full   bg-[#020617] h-screen">
+      
 
         <div className="   inside-box lg:w-[68%] md:w-[68%] sm:w-[80%]   mx-auto my-14 rounded-md  bg-[#0f172a] pb-2">
           <div className="inner-inner-box m-6">
@@ -153,16 +156,17 @@ export default function Signup() {
                 Already have an Account?
                 <span
                   className="text-blue-600 font-bold cursor-pointer  "
-                  onClick={() => navigate("/login")}
+                  onClick={() => navigate("/auth/login")}
                 >
                   Login
                 </span>{" "}
               </p>
             </div>
           </div>
+          <ToastContainer />
         </div>
-        <ToastContainer />
-      </div>
-    </div>
+        
+     
+    
   );
 }

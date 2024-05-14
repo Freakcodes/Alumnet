@@ -1,33 +1,44 @@
-import React from 'react';
-import { useForm } from 'react-hook-form';
+import React, { useEffect, useState } from 'react';
+import { set, useForm } from 'react-hook-form';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
+import { useAuth } from '@/contexts/AuthContext';
+import Profile from './MyProfile';
+
 
 const EditProfile = () => {
+    const {UserData,setUserData,setAvatar}=useAuth()
+    const [profileData,setProfileData]=useState([]);
   const { register, handleSubmit, formState: { errors } } = useForm();
   const navigate=useNavigate();
+  const token = Cookies.get('accessToken');
   const onSubmit = async (data) => {
     
     const avatar=data.avatar[0];
     data.avatar=avatar;
-    const token = Cookies.get('accessToken');
+    
     
     if (token) {
       try {
         // Update student API call
+        console.log(data);
         const response = await axios.post('http://localhost:8000/api/v1/users/update-student', data, {
           headers: {
             'Content-Type': 'multipart/form-data',
             Authorization: `Bearer ${token}`,
           },
+          
         });
         
         // Check if the response indicates successful update
         if (response.status === 200 && response.data.success) {
           // Update successful, redirect to dashboard
-          navigate("/dashboard");
+          console.log(response.data.data.avatar.url);
+          localStorage.setItem("avatar", response.data.data.avatar?.url);
+          setAvatar(response.data.data.avatar?.url);
+          navigate("/feed");
         } else {
           // Handle update failure or unauthorized request
           console.error('Update failed or unauthorized request:', response.data.message);
@@ -43,12 +54,32 @@ const EditProfile = () => {
       // Optionally, you can redirect the user to the login page or display an error message
     }
   };
+  const placeHolderValue=async()=>{
+    const response = await axios.get('http://localhost:8000/api/v1/users/my-profile', {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            });
+    console.log(response.data.data.avatar.url);
+   
+    // setAvatar(response.data.data.user?.avatar?.url);
+   setProfileData([response.data.data]);
+    
+
+  }
+  useEffect(()=>{
+    placeHolderValue();
+  //  console.log(profileData);
+    
+
+
+  },[])
 
   return (
-    <div className="mx-auto max-w-md p-6 rounded-md shadow-md bg-[#0f172a] text-white">
+    <div className="mx-auto max-w-md p-6 rounded-md shadow-md bg-[#0f172a] text-white mt-10">
     <h2 className="text-lg font-semibold mb-4">Edit Profile</h2>
     <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="mb-4">
+        <div className="mb-4 ">
             <label htmlFor="profilePicture" className="block mb-1">Avatar (jpg/png)</label>
             <Input
                 type="file"
@@ -73,6 +104,7 @@ const EditProfile = () => {
                     }
                 }}
                 className="w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500"
+                
             />
             {errors.profilePicture && (
                 <span className="text-red-500">
@@ -80,7 +112,7 @@ const EditProfile = () => {
                 </span>
             )}
         </div>
-        <img id="avatar-preview" src="#" alt="Preview" className="mb-4" style={{ display: 'none', maxWidth: '100%', height: 'auto' }} />
+        <img id="avatar-preview" src={profileData[0]?profileData[0].avatar.url:""}  alt="Preview" className="mb-4" />
         <div className="mb-4">
             <label className="block mb-1">User Type</label>
             <div className="flex">
@@ -91,6 +123,7 @@ const EditProfile = () => {
                         value="Alumni"
                         {...register("userType", { required: true })}
                         defaultChecked
+                        
                     />
                     <label htmlFor="male" className="ml-1">Alumni</label>
                 </div>
@@ -107,12 +140,29 @@ const EditProfile = () => {
             {errors.userType && <span className="text-red-500">Please select user type</span>}
         </div>
         <div className="mb-4">
+            <label htmlFor="name" className="block mb-1">Name</label>
+            <Input
+                type="name"
+                id="name"
+                {...register("name", { required: true })}
+                className="w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500"
+               
+                defaultValue={profileData[0]?profileData[0].name:""}
+                
+            />
+            {errors.name && <span className="text-red-500">Please enter name</span>}
+        </div>
+
+        <div className="mb-4">
             <label htmlFor="phoneNo" className="block mb-1">Phone Number</label>
             <Input
                 type="tel"
                 id="phoneNo"
                 {...register("phoneNo", { required: true, pattern: /^[0-9]{10}$/ })}
                 className="w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500"
+               
+                defaultValue={profileData[0]?profileData[0].phoneNo:""}
+                
             />
             {errors.phoneNo && <span className="text-red-500">Please enter a valid phone number</span>}
         </div>
@@ -123,6 +173,7 @@ const EditProfile = () => {
                 id="linkedInUrl"
                 {...register("linkedInUrl", { pattern: /^(ftp|http|https):\/\/[^ "]+$/ })}
                 className="w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500"
+                defaultValue={profileData[0]?profileData[0].linkedInUrl:""}
             />
             {errors.linkedInUrl && <span className="text-red-500">Please enter a valid LinkedIn URL</span>}
         </div>
@@ -133,6 +184,7 @@ const EditProfile = () => {
                 id="collegeName"
                 {...register("collegeName", { required: true })}
                 className="w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500"
+                defaultValue={profileData[0]?profileData[0].collegeName:""}  
             />
             {errors.collegeName && <span className="text-red-500">College name is required</span>}
         </div>
@@ -143,6 +195,8 @@ const EditProfile = () => {
                 id="courseName"
                 {...register("courseName", { required: true })}
                 className="w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500"
+                defaultValue={profileData[0]?profileData[0].courseName:""}
+               
             />
             {errors.courseName && <span className="text-red-500">Course name is required</span>}
         </div>

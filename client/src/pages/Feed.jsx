@@ -6,23 +6,39 @@ import { Outlet, useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import CreatePost from "@/components/CreatePost";
 import { Link } from "react-router-dom";
+import PostSection from "@/components/ShowPost";
+import { useAuth } from "@/contexts/AuthContext";
 const Feed = () => {
   const navigate=useNavigate();
+  const {avatar}=useAuth();
+  // const {UserData,setUserData,userType}=useAuth();
   
-  const src=localStorage.getItem('avatar');
+const userType=localStorage.getItem("userType");
+
+
+  
   const username=localStorage.getItem('username');
-  const token=Cookies.get('accessToken')
   
+  
+  // console.log(avatar);
   const handleProfileClick=()=>{
-    navigate('/profile')
+    navigate('/myprofile')
   }
   const handleLogout=()=>{
     localStorage.removeItem('isUserAuthenticated');
     Cookies.remove('accessToken');
     localStorage.removeItem('username')
     localStorage.removeItem('avatar')
-    navigate("/login");
+    localStorage.removeItem('userType');
+    
+    navigate("/auth/login");
   }
+  useEffect(()=>{
+    
+  },[avatar])
+ 
+  
+  
   
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-gray-100">
@@ -33,7 +49,7 @@ const Feed = () => {
         {/* Profile Icon */}
         <div className="flex items-center space-x-2 cursor-pointer" onClick={handleProfileClick}>
           <img
-            src={src}
+            src={avatar}
             alt="Profile"
             className="w-12 h-12 rounded-full"
           />
@@ -45,7 +61,7 @@ const Feed = () => {
         </button>
       </div>
       <div className="navbar mt-10 flex flex-col gap-5">
-        <div className="flex rounded-lg">
+      <div className="flex rounded-lg">
           <Link
             to="search"
             className="text-center border w-full p-2 mx-2 text-white hover:bg-gray-700 hover:text-white"
@@ -61,15 +77,68 @@ const Feed = () => {
             Feed
           </Link>
         </div>
-        <div className="flex rounded-lg">
+        
+          
+            <>
+              
+          {
+            
+            userType=='alumni'&&(
+              <>
+              <div className="flex rounded-lg">
+              <Link
+              to="/edit/alumni"
+              className="text-center border w-full p-2 mx-2 text-white hover:bg-gray-700 hover:text-white"
+              
+            >
+             Edit Profile
+            </Link>
+            </div>
+            </>
+            )
+          }
+          {
+            
+            userType=='student'&&(
+              <>
+              <div className="flex rounded-lg">
+              <Link
+              to="/edit/student"
+              className="text-center border w-full p-2 mx-2 text-white hover:bg-gray-700 hover:text-white"
+              
+            >
+             Edit Profile
+            </Link>
+            </div>
+            </>
+            )
+          }
+          
+        
+            </>
+          
+        
+        {/* {
+          userType=="alumni" &&(
+            <>
+              <div className="flex rounded-lg">
           <Link
-            to="/profile/student"
+            to="editAlumni"
             className="text-center border w-full p-2 mx-2 text-white hover:bg-gray-700 hover:text-white"
             
           >
            Edit Profile
           </Link>
-        </div>
+        </div>   
+            </>
+          )
+        } */}
+            
+          
+        
+        
+        
+       
         
         
       </div>
@@ -77,6 +146,7 @@ const Feed = () => {
     {/* Main Content */}
     <div className=" flex-grow bg-[#0f172a] overflow-y-auto lg:ml-[20%] ">
       {/* Top Navigation Bar */}
+
       <Outlet/>
      
   </div>

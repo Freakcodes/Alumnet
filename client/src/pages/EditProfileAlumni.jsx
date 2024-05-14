@@ -13,18 +13,9 @@ const EditProfileAlumni = () => {
     
     if (token) {
       try {
-        const formData = new FormData();
-        formData.append('avatar', data.avatar[0]);
-        formData.append('userType', data.userType);
-        formData.append('phoneNo', data.phoneNo);
-        formData.append('linkedInUrl', data.linkedInUrl);
-        formData.append('collegeName', data.collegeName);
-        formData.append('courseName', data.courseName);
-        formData.append('companyName', data.companyName);
-        formData.append('location', data.location);
-        formData.append('areaOfExpertise', data.areaOfExpertise);
-        
-        const response = await axios.post('http://localhost:8000/api/v1/users/update-alumni', formData, {
+        const avatar=data.avatar[0];
+        data.avatar=avatar;
+        const response = await axios.post('http://localhost:8000/api/v1/users/update-alumni', data, {
           headers: {
             'Content-Type': 'multipart/form-data',
             Authorization: `Bearer ${token}`,

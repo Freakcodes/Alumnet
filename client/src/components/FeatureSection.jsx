@@ -6,7 +6,7 @@ const FeatureSection = () => {
     
     <div className="relative mt-20 border-b border-neutral-800 min-h-[800px]">
       <div className="text-center">
-        <span className="text-white bg-gradient-to-r from-blue-400 to-blue-950 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-350 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded-lg text-lg px-5 py-2.5 text-center me-2 mb-2  uppercase cursor-pointer" onClick={()=>navigate("/signup")}>
+        <span className="text-white bg-gradient-to-r from-blue-400 to-blue-950 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-350 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded-lg text-lg px-5 py-2.5 text-center me-2 mb-2  uppercase cursor-pointer" onClick={()=>navigate("/auth/signup")}>
           Join us
         </span>
         <h2 className="text-3xl sm:text-5xl lg:text-6xl mt-10 lg:mt-20 tracking-wide">

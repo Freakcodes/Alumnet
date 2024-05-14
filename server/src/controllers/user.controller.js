@@ -153,10 +153,10 @@ const logoutUser = asyncHandler(async (req, res) => {
 });
 
 const updateStudent = asyncHandler(async (req, res) => {
-  const { userType, name, phoneNo, linkedInUrl, collegeName, courseName } =
+  const { userType,name,  phoneNo, linkedInUrl, collegeName, courseName } =
     req.body;
 
-  console.log(userType, name, phoneNo, linkedInUrl, collegeName, courseName);
+  console.log(userType,  phoneNo, linkedInUrl, collegeName, courseName);
 
   if (
     !userType ||
@@ -204,7 +204,7 @@ const updateStudent = asyncHandler(async (req, res) => {
 const updateAlumni = asyncHandler(async (req, res) => {
   const {
     userType,
-    name,
+    
     phoneNo,
     linkedInUrl,
     collegeName,
@@ -216,7 +216,7 @@ const updateAlumni = asyncHandler(async (req, res) => {
 
   if (
     !userType ||
-    !name ||
+    
     !phoneNo ||
     !linkedInUrl ||
     !collegeName ||
@@ -247,7 +247,7 @@ const updateAlumni = asyncHandler(async (req, res) => {
           url: avatarFile.url,
           public_id: avatarFile.public_id,
         },
-        name,
+       
         phoneNo,
         linkedInUrl,
         collegeName,
