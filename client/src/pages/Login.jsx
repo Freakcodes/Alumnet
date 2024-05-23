@@ -35,7 +35,7 @@ export default function Login() {
       //store the token in cookies
       Cookies.set("accessToken", accessToken);
 
-      setUserData([response.data.data]);
+      setUserData((response)=>([response.data.data]));
       console.log(response.data.data);
       localStorage.setItem("isUserAuthenticated", true);
       localStorage.setItem("username", response.data.data.user.name);

@@ -1,43 +1,37 @@
-import React, { useEffect, useState } from 'react';
-import { set, useForm } from 'react-hook-form';
+import React from 'react';
+import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
-import { useAuth } from '@/contexts/AuthContext';
-import Profile from './MyProfile';
-
+import profile from "../assets/profile.svg";
 
 const EditProfile = () => {
-    const {UserData,setUserData,setAvatar}=useAuth()
-    const [profileData,setProfileData]=useState([]);
+
+
   const { register, handleSubmit, formState: { errors } } = useForm();
   const navigate=useNavigate();
-  const token = Cookies.get('accessToken');
   const onSubmit = async (data) => {
     
     const avatar=data.avatar[0];
     data.avatar=avatar;
-    
+    const token = Cookies.get('accessToken');
     
     if (token) {
       try {
         // Update student API call
-        console.log(data);
         const response = await axios.post('http://localhost:8000/api/v1/users/update-student', data, {
           headers: {
             'Content-Type': 'multipart/form-data',
             Authorization: `Bearer ${token}`,
           },
-          
         });
         
         // Check if the response indicates successful update
         if (response.status === 200 && response.data.success) {
           // Update successful, redirect to dashboard
           console.log(response.data.data.avatar.url);
-          localStorage.setItem("avatar", response.data.data.avatar?.url);
-          setAvatar(response.data.data.avatar?.url);
+          localStorage.setItem('avatar',response.data.data.avatar.url)
           navigate("/feed");
         } else {
           // Handle update failure or unauthorized request
@@ -54,32 +48,16 @@ const EditProfile = () => {
       // Optionally, you can redirect the user to the login page or display an error message
     }
   };
-  const placeHolderValue=async()=>{
-    const response = await axios.get('http://localhost:8000/api/v1/users/my-profile', {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            });
-    console.log(response.data.data.avatar.url);
-   
-    // setAvatar(response.data.data.user?.avatar?.url);
-   setProfileData([response.data.data]);
-    
-
-  }
-  useEffect(()=>{
-    placeHolderValue();
-  //  console.log(profileData);
-    
-
-
-  },[])
 
   return (
-    <div className="mx-auto max-w-md p-6 rounded-md shadow-md bg-[#0f172a] text-white mt-10">
-    <h2 className="text-lg font-semibold mb-4">Edit Profile</h2>
+    <div className="flex  justify-center">
+    <div className='w-[50%] lg:block hidden p-2 lg:w-1/2 mt-32 ml-32 max-w-xl'>
+        <img src={profile} alt="" />
+    </div>
+    <div className="inside-box lg:w-[68%] md:w-[68%] sm:w-[80%] mx-auto bg-slate-900 max-w-lg p-9 mt-10 rounded-md box-shadow-md backdrop-blur-md text-white shadow-[4.0px_8.0px_8.0px_rgba(0,0,0,0.38)]">
+    <h2 className="font-bold text-3xl mb-4">Edit Profile👤</h2>
     <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="mb-4 ">
+        <div className="mb-4">
             <label htmlFor="profilePicture" className="block mb-1">Avatar (jpg/png)</label>
             <Input
                 type="file"
@@ -104,7 +82,6 @@ const EditProfile = () => {
                     }
                 }}
                 className="w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500"
-                
             />
             {errors.profilePicture && (
                 <span className="text-red-500">
@@ -112,7 +89,7 @@ const EditProfile = () => {
                 </span>
             )}
         </div>
-        <img id="avatar-preview" src={profileData[0]?profileData[0].avatar.url:""}  alt="Preview" className="mb-4" />
+        <img id="avatar-preview" src="#" alt="Preview" className="mb-4" style={{ display: 'none', maxWidth: '100%', height: 'auto' }} />
         <div className="mb-4">
             <label className="block mb-1">User Type</label>
             <div className="flex">
@@ -122,7 +99,6 @@ const EditProfile = () => {
                         id="Alumni"
                         value="Alumni"
                         {...register("userType", { required: true })}
-                        defaultChecked
                         
                     />
                     <label htmlFor="male" className="ml-1">Alumni</label>
@@ -133,6 +109,7 @@ const EditProfile = () => {
                         id="Student"
                         value="Student"
                         {...register("userType", { required: true })}
+                        defaultChecked
                     />
                     <label htmlFor="female" className="ml-1">Student</label>
                 </div>
@@ -144,15 +121,11 @@ const EditProfile = () => {
             <Input
                 type="name"
                 id="name"
-                {...register("name", { required: true })}
+                {...register("name", { required: true,minLength:3})}
                 className="w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500"
-               
-                defaultValue={profileData[0]?profileData[0].name:""}
-                
             />
-            {errors.name && <span className="text-red-500">Please enter name</span>}
+            {errors.name && <span className="text-red-500">name should not be empty or  less then 3 words</span>}
         </div>
-
         <div className="mb-4">
             <label htmlFor="phoneNo" className="block mb-1">Phone Number</label>
             <Input
@@ -160,9 +133,6 @@ const EditProfile = () => {
                 id="phoneNo"
                 {...register("phoneNo", { required: true, pattern: /^[0-9]{10}$/ })}
                 className="w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500"
-               
-                defaultValue={profileData[0]?profileData[0].phoneNo:""}
-                
             />
             {errors.phoneNo && <span className="text-red-500">Please enter a valid phone number</span>}
         </div>
@@ -173,7 +143,6 @@ const EditProfile = () => {
                 id="linkedInUrl"
                 {...register("linkedInUrl", { pattern: /^(ftp|http|https):\/\/[^ "]+$/ })}
                 className="w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500"
-                defaultValue={profileData[0]?profileData[0].linkedInUrl:""}
             />
             {errors.linkedInUrl && <span className="text-red-500">Please enter a valid LinkedIn URL</span>}
         </div>
@@ -184,7 +153,6 @@ const EditProfile = () => {
                 id="collegeName"
                 {...register("collegeName", { required: true })}
                 className="w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500"
-                defaultValue={profileData[0]?profileData[0].collegeName:""}  
             />
             {errors.collegeName && <span className="text-red-500">College name is required</span>}
         </div>
@@ -195,20 +163,18 @@ const EditProfile = () => {
                 id="courseName"
                 {...register("courseName", { required: true })}
                 className="w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500"
-                defaultValue={profileData[0]?profileData[0].courseName:""}
-               
             />
             {errors.courseName && <span className="text-red-500">Course name is required</span>}
         </div>
         <button
             type="submit"
-            className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
+            className="bg-gradient-to-r from-green-400 to-blue-500 hover:from-indigo-500 hover:to-purple-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
         >
             Save
         </button>
     </form>
 </div>
-
+</div>
   );
 };
 

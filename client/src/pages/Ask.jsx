@@ -9,9 +9,11 @@ const Ask = () => {
     setUserType(type);
     // Navigate based on user selection
     if (type === 'student') {
-      navigate('/profile/student');
+      localStorage.setItem('userType','student');
+      navigate('/edit/student');
     } else if (type === 'alumni') {
-      navigate('/profile/alumni');
+      localStorage.setItem('userType','student');
+      navigate('/edit/alumni');
     }
   };
 

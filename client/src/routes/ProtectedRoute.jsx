@@ -7,7 +7,7 @@ export const PrivateRoutes = () => {
     // const { isUser } = useAuth();
     // console.log(isUser);
     const isUser=Cookies.get('accessToken');
-
+    
     if(isUser!=null){
         return(
             <Outlet/>
@@ -15,7 +15,7 @@ export const PrivateRoutes = () => {
     }else{
 
         return(
-            <Navigate to='/login'/>
+            <Navigate to='/auth/login'/>
         )
        
     }
